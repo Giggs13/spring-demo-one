@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:resources/config.properties"/>
 
     <bean id="customLoggerConfig" class="com.giggs13.springdemo.logging.CustomLoggerConfig" init-method="initLogger">
         <property name="rootLoggerLevel" value="FINE"/>
         <property name="printedLoggerLevel" value="FINE"/>
     </bean>
 
-    <bean id="myCoach" class="com.giggs13.springdemo.HockeyCoach"/>
+    <bean id="fortune" class="com.giggs13.springdemo.fortune.HappyFortuneService"/>
+
+    <bean id="badFortune" class="com.giggs13.springdemo.fortune.BadFortuneService"/>
+
+    <bean id="trackCoach" class="com.giggs13.springdemo.coach.TrackCoach">
+        <constructor-arg ref="fortune"/>
+    </bean>
+
+    <bean id="cricketCoach" class="com.giggs13.springdemo.coach.CricketCoach">
+        <property name="fortuneService" ref="fortune"/>
+        <property name="emailAddress" value="${property.email_address}"/>
+        <property name="team" value="${property.team}"/>
+    </bean>
+
+    <bean id="hockeyCoach" class="com.giggs13.springdemo.coach.HockeyCoach">
+        <constructor-arg ref="badFortune"/>
+    </bean>
 </beans>
